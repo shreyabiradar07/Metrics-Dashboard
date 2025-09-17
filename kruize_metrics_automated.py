@@ -66,7 +66,7 @@ def run_queries(server,prometheus_url_1=None, prometheus_url_2=None):
     
     ### Open shift Auth Tokens needed
     params = {
-    "query": 'f)'
+    "query": 'max_over_time(sum(rate(container_cpu_usage_seconds_total{container!="POD",image!="",pod=~"kruize-recommendations-[^-]*-[^-]*$"}[1m]))[24h:])'
         }
     params1={
         "query": 'max_over_time(sum(container_memory_working_set_bytes{container!="POD",image!="",pod=~"kruize-recommendations-[^-]*-[^-]*$"})[24h:])/1024/1024/1024'
@@ -327,7 +327,7 @@ def main(argv):
             "kruizedb_cpu_max": "max(sum(rate(container_cpu_usage_seconds_total{pod=~"'"postgres-deployment-[^-]*-[^-]*$"'",container=\"postgres\"}"f"[{time_duration}])))",
             "kruize_memory": "(sum(container_memory_working_set_bytes{pod=~"'"kruize-[^-]*-[^-]*$"'",container=\"kruize\"}))",
             "kruize_cpu_max": "max_over_time(sum(rate(container_cpu_usage_seconds_total{container!=\"POD\",image!=\"\",pod=~\"kruize-recommendations-[^-]*-[^-]*$\"}[1m]))[24h:])",
-            "kafka_lag": f"sum(aws_kafka_sum_offset_lag_sum{{group=\"ros-ocp\", topic=\"hccm.ros.events\"}} > 0)",
+            "kafka_lag": f"sum(kafka_consumergroup_group_lag{{group=\"ros-ocp\", topic=\"hccm.ros.events\"}} > 0)",
             "instances": "count(kube_pod_info{pod=~\"kruize-recommendations-[^-]*-[^-]*$\"})",
             "kruize_mmr_max":  f"max_over_time(sum(container_memory_working_set_bytes{{container!=\"POD\",image!=\"\",pod=~\"kruize-recommendations-[^-]*-[^-]*$\"}})/1024/1024[{time_duration}])",
             "aws_fss": f"aws_rds_free_storage_space_average{{job=~\"cloudwatch-exporter.*\",dbinstance_identifier=~\"(kruize-prod|kruize-stage)\"}}/1000/1000/1000",
